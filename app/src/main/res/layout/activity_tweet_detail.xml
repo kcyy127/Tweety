@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="24dp">
+
+            <ImageView
+                android:id="@+id/ivProfileImage"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:transitionName="ivProfileImage"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/tvTime"
+                style="@style/textViewBody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:text="8 min"
+                android:transitionName="tvTime" />
+
+            <TextView
+                android:id="@+id/tvName"
+                style="@style/textViewName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@+id/ivProfileImage"
+                android:text="Name"
+                android:transitionName="tvName" />
+
+            <ImageView
+                android:id="@+id/ivVerified"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@id/tvName"
+                android:src="@drawable/icon_verified"
+                android:transitionName="ivVerified"
+                android:visibility="invisible" />
+
+
+            <TextView
+                android:id="@+id/tvScreenName"
+                style="@style/textViewScreenName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvName"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="2dp"
+                android:layout_toEndOf="@+id/ivProfileImage"
+                android:layout_toRightOf="@id/ivProfileImage"
+                android:text="ScreenName"
+                android:transitionName="tvScreenName" />
+
+            <TextView
+                android:id="@+id/tvBody"
+                style="@style/textViewBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ivProfileImage"
+                android:layout_margin="6dp"
+                android:autoLink="all"
+                android:linksClickable="true"
+                android:text="Placeholder placeholder placeholder"
+                android:transitionName="tvBody" />
+
+            <ImageView
+                android:id="@+id/ivMedia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvBody"
+                android:layout_margin="6dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:transitionName="ivMedia"
+                android:visibility="gone"
+                tools:srcCompat="@tools:sample/avatars" />
+
+        </RelativeLayout>
+    </ScrollView>
+
+</layout>
