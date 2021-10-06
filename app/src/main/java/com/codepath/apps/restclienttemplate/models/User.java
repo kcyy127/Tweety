@@ -10,14 +10,20 @@ public class User {
     public String name;
     public String screenName;
     public String profileImageUrl;
-    public boolean verified;
+    public int verified;
 
     public static User fromJson(JSONObject jsonObject) throws JSONException {
         User user = new User();
         user.name = jsonObject.getString("name");
         user.screenName = jsonObject.getString("screen_name");
         user.profileImageUrl = jsonObject.getString("profile_image_url_https");
-        user.verified = jsonObject.getBoolean("verified");
+
+        if (jsonObject.getBoolean("verified")) {
+            user.verified = 1;
+        } else {
+            user.verified = 0;
+        }
+
         return user;
     }
 }

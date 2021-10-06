@@ -24,7 +24,6 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.apps.restclienttemplate.databinding.ItemTweetImageBinding;
 import com.codepath.apps.restclienttemplate.databinding.ItemTweetTextBinding;
-import com.codepath.apps.restclienttemplate.models.Media;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
 import org.jetbrains.annotations.NotNull;
@@ -63,13 +62,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 break;
             case TYPE_IMAGE:
                 ItemTweetImageBinding bindingImage = ItemTweetImageBinding.inflate(layoutInflater, parent, false);
-//                View viewImage = layoutInflater.inflate(R.layout.item_tweet_image, parent, false);
                 viewHolder = new mViewHolderImage(bindingImage);
                 break;
-//            case TYPE_VIDEO:
-//                View viewVideo = layoutInflater.inflate(R.layout.item_tweet_video, parent, false);
-//                viewHolder = new mViewHolderVideo(viewVideo);
-//                break;
         }
 
         return viewHolder;
@@ -85,10 +79,6 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 mViewHolderImage viewHolderImage = (mViewHolderImage) holder;
                 viewHolderImage.bind(tweet);
                 break;
-//            case TYPE_VIDEO:
-//                mViewHolderVideo viewHolderVideo = (mViewHolderVideo) holder;
-//                viewHolderVideo.bind(tweet);
-//                break;
             default:
                 mViewHolderText viewHolderText = (mViewHolderText) holder;
                 viewHolderText.bind(tweet);
@@ -103,22 +93,14 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemViewType(int position) {
-        List<Media> tweetMedia = tweets.get(position).media;
+        Tweet tweet = tweets.get(position);
 
-        if (tweetMedia.size() == 0) {
-            return TYPE_TEXT;
+        if (!tweet.photoUrl.equals("")) {
+            return TYPE_IMAGE;
         } else {
-            switch (tweetMedia.get(0).mediaType) {
-                case "photo":
-                    return TYPE_IMAGE;
-                case "animated_gif":
-                    return TYPE_GIF;
-                case "video":
-                    return TYPE_VIDEO;
-                default:
-                    return -1;
-            }
+            return TYPE_TEXT;
         }
+
     }
 
     public void clear() {
@@ -167,7 +149,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     .into(bindingText.ivProfileImage);
             bindingText.tvTime.setText(tweet.getFormattedTimestamp());
 
-            if (tweet.user.verified) {
+            if (tweet.user.verified == 1) {
                 bindingText.ivVerified.setVisibility(View.VISIBLE);
             } else {
                 bindingText.ivVerified.setVisibility(View.INVISIBLE);
@@ -222,11 +204,11 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     .into(bindingImage.ivProfileImage);
             bindingImage.tvTime.setText(tweet.getFormattedTimestamp());
             Glide.with(context)
-                    .load(tweet.media.get(0).url)
+                    .load(tweet.photoUrl)
                     .fitCenter()
                     .transform(new RoundedCorners(48))
                     .into(bindingImage.ivMedia);
-            if (tweet.user.verified) {
+            if (tweet.user.verified == 1) {
                 bindingImage.ivVerified.setVisibility(View.VISIBLE);
             } else {
                 bindingImage.ivVerified.setVisibility(View.INVISIBLE);

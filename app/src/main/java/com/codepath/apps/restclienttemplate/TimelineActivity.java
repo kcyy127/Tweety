@@ -104,22 +104,6 @@ public class TimelineActivity extends AppCompatActivity {
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 Log.i(LOG_TAG, "onSuccess!" + json.toString());
                 JSONArray jsonArray = json.jsonArray;
-//                try {
-//                    for (int i = 0; i < jsonArray.length(); i++) {
-//                        JSONObject tweet = jsonArray.getJSONObject(i);
-//                        JSONObject entities = tweet.getJSONObject("entities");
-//                        if (entities.has("media")) {
-//                            JSONArray media = entities.getJSONArray("media");
-//                            for (int j = 0; j<media.length(); j++) {
-//                                JSONObject temp = media.getJSONObject(j);
-//                                Log.d(LOG_TAG, tweet.getString("text") + " " + media.toString());
-//                                Log.d(LOG_TAG, tweet.toString());
-//                            }
-//                        }
-//                    }
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
                 try {
                     adapter.clear();
                     adapter.addAll(Tweet.fromJsonArray(jsonArray));
@@ -131,8 +115,10 @@ public class TimelineActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                Log.e(LOG_TAG, "onFailure:( ", throwable);
-                throwable.printStackTrace();
+                Log.e(LOG_TAG, "client getHomeTimeline Failure ", throwable);
+                Log.d(LOG_TAG, throwable.toString());
+                // load from database
+                Log.d(LOG_TAG, "loading from database");
             }
         });
     }

@@ -38,21 +38,19 @@ public class TweetDetailActivity extends AppCompatActivity {
                 .into(binding.ivProfileImage);
         binding.tvBody.setText(tweet.body);
         binding.tvTime.setText(tweet.getFormattedTimestamp());
-        if (tweet.user.verified) {
+        if (tweet.user.verified == 1) {
             binding.ivVerified.setVisibility(View.VISIBLE);
         } else {
             binding.ivVerified.setVisibility(View.INVISIBLE);
         }
 
-        if (tweet.media.size() != 0) {
-            if (tweet.media.get(0).mediaType.equals("photo")) {
-                binding.ivMedia.setVisibility(View.VISIBLE);
-                Glide.with(this)
-                        .load(tweet.media.get(0).url)
-                        .fitCenter()
-                        .transform(new RoundedCorners(48))
-                        .into(binding.ivMedia);
-            }
+        if (!tweet.photoUrl.equals("")) {
+            binding.ivMedia.setVisibility(View.VISIBLE);
+            Glide.with(this)
+                    .load(tweet.photoUrl)
+                    .fitCenter()
+                    .transform(new RoundedCorners(48))
+                    .into(binding.ivMedia);
         }
 
     }
