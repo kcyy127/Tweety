@@ -25,6 +25,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.apps.restclienttemplate.databinding.ItemTweetImageBinding;
 import com.codepath.apps.restclienttemplate.databinding.ItemTweetTextBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.apps.restclienttemplate.models.User;
 
 import org.jetbrains.annotations.NotNull;
 import org.parceler.Parcels;
@@ -37,6 +38,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private Context context;
     private List<Tweet> tweets;
+    private List<User> users;
 
     private static final int TYPE_TEXT = 0;
     private static final int TYPE_IMAGE = 1;

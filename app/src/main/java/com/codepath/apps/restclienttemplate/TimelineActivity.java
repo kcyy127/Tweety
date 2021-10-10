@@ -7,6 +7,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
@@ -32,6 +33,8 @@ public class TimelineActivity extends AppCompatActivity {
     private TweetsAdapter adapter;
     private EndlessRecyclerViewScrollListener scrollListener;
 
+    private TweetsDatabaseHelper dbHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +56,9 @@ public class TimelineActivity extends AppCompatActivity {
             }
         });
 
-        tweets = new ArrayList<>();
+        dbHelper = TweetsDatabaseHelper.getInstance(this);
+        tweets = dbHelper.getAllTweets();
+
         adapter = new TweetsAdapter(this, tweets);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -81,10 +86,12 @@ public class TimelineActivity extends AppCompatActivity {
                 // 2. Deserialize and construct new model objects from the API response
                 JSONArray jsonArray = json.jsonArray;
                 try {
-                    List<Tweet> tweets = Tweet.fromJsonArray(jsonArray);
-                    // 3. Append the new data objects to the existing set of items inside the array of items
-                    // 4. Notify the adapter of the new items made with `notifyItemRangeInserted()`
-                    adapter.addAll(tweets);
+                    List<Tweet> extraTweets = Tweet.fromJsonArray(jsonArray);
+
+                    dbHelper.loadFromList(extraTweets);
+
+                    // use livedata someday
+                    adapter.addAll(extraTweets);
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, "JSON exception", e);
                 }
@@ -106,7 +113,13 @@ public class TimelineActivity extends AppCompatActivity {
                 JSONArray jsonArray = json.jsonArray;
                 try {
                     adapter.clear();
-                    adapter.addAll(Tweet.fromJsonArray(jsonArray));
+                    dbHelper.deleteAllTweetsAndUsers();
+
+                    List<Tweet> newTweets = Tweet.fromJsonArray(jsonArray);
+
+                    dbHelper.loadFromList(newTweets);
+
+                    adapter.addAll(newTweets);
                     swipeContainer.setRefreshing(false);
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, "JSON exception", e);
@@ -116,9 +129,8 @@ public class TimelineActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                 Log.e(LOG_TAG, "client getHomeTimeline Failure ", throwable);
-                Log.d(LOG_TAG, throwable.toString());
-                // load from database
-                Log.d(LOG_TAG, "loading from database");
+                Log.d(LOG_TAG, throwable.getMessage());
+                swipeContainer.setRefreshing(false);
             }
         });
     }

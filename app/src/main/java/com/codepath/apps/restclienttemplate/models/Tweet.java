@@ -1,5 +1,12 @@
 package com.codepath.apps.restclienttemplate.models;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+import androidx.room.ForeignKey.Action;
+
 import com.codepath.apps.restclienttemplate.TimeFormatter;
 
 import org.json.JSONArray;
@@ -11,23 +18,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Parcel
+@Entity(foreignKeys = @ForeignKey(entity = User.class,
+        parentColumns = "id",
+        childColumns = "userId",
+        onDelete = ForeignKey.CASCADE,
+        onUpdate = ForeignKey.CASCADE), tableName = "tweets")
 public class Tweet {
+    @ColumnInfo
+    @PrimaryKey
     public long id;
+    @ColumnInfo
     public String body;
+    @ColumnInfo
     public String createdAt;
-    public User user;
+
+    @ColumnInfo
     public int favoriteCount;
+    @ColumnInfo
     public int retweetCount;
+    @ColumnInfo
     public String photoUrl = "";
+
+    @ColumnInfo
+    public long userId;
+
+    @Ignore
+    public User user;
 
     public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
         Tweet tweet = new Tweet();
+        tweet.id = jsonObject.getLong("id");
         tweet.body = jsonObject.getString("full_text");
         tweet.createdAt = jsonObject.getString("created_at");
-        tweet.id = jsonObject.getLong("id");
-        tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
         tweet.favoriteCount = jsonObject.getInt("favorite_count");
         tweet.retweetCount = jsonObject.getInt("retweet_count");
+
+        tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
+        tweet.userId = tweet.user.id;
 
         if (jsonObject.has("extended_entities")) {
             JSONObject ext = jsonObject.getJSONObject("extended_entities");
