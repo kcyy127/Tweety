@@ -1,5 +1,8 @@
 package com.codepath.apps.restclienttemplate.models;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -14,6 +17,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcel;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +36,8 @@ public class Tweet {
     public String body;
     @ColumnInfo
     public String createdAt;
+    @ColumnInfo
+    public long createdMilli;
 
     @ColumnInfo
     public int favoriteCount;
@@ -45,11 +52,18 @@ public class Tweet {
     @Ignore
     public User user;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
         Tweet tweet = new Tweet();
         tweet.id = jsonObject.getLong("id");
         tweet.body = jsonObject.getString("full_text");
         tweet.createdAt = jsonObject.getString("created_at");
+
+        String date_string = tweet.createdAt;
+        ZonedDateTime zonedDateTime = ZonedDateTime.parse(date_string,
+                DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss Z yyyy"));
+        tweet.createdMilli = zonedDateTime.toInstant().toEpochMilli();
+
         tweet.favoriteCount = jsonObject.getInt("favorite_count");
         tweet.retweetCount = jsonObject.getInt("retweet_count");
 

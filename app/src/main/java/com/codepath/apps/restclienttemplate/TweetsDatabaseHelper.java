@@ -21,7 +21,7 @@ public class TweetsDatabaseHelper extends SQLiteOpenHelper {
     private static final String LOG_TAG = "TweetsDatabaseHelper";
 
     private static final String DATABASE_NAME = "tweetsDatabase";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
 
     // Table Names
     private static final String TABLE_TWEETS = "tweets";
@@ -31,6 +31,7 @@ public class TweetsDatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_TWEET_ID = "id";
     private static final String KEY_TWEET_BODY = "body";
     private static final String KEY_TWEET_CREATED_AT = "createdAt";
+    private static final String KEY_TWEET_CREATED_MILLI = "createdMilli";
     private static final String KEY_TWEET_FAVORITE_COUNT = "favoriteCount";
     private static final String KEY_TWEET_RETWEET_COUNT = "retweetCount";
     private static final String KEY_TWEET_PHOTO_URL = "photoUrl";
@@ -69,6 +70,7 @@ public class TweetsDatabaseHelper extends SQLiteOpenHelper {
                 KEY_TWEET_USER_ID_FK + " INTEGER REFERENCES " + TABLE_USERS + "," + // Define a foreign key
                 KEY_TWEET_BODY + " TEXT," +
                 KEY_TWEET_CREATED_AT + " TEXT," +
+                KEY_TWEET_CREATED_MILLI + " INTEGER," +
                 KEY_TWEET_FAVORITE_COUNT + " INTEGER," +
                 KEY_TWEET_RETWEET_COUNT + " INTEGER," +
                 KEY_TWEET_PHOTO_URL + " TEXT" +
@@ -108,6 +110,7 @@ public class TweetsDatabaseHelper extends SQLiteOpenHelper {
             values.put(KEY_TWEET_ID, tweet.id);
             values.put(KEY_TWEET_BODY, tweet.body);
             values.put(KEY_TWEET_CREATED_AT, tweet.createdAt);
+            values.put(KEY_TWEET_CREATED_MILLI, tweet.createdMilli);
             values.put(KEY_TWEET_FAVORITE_COUNT, tweet.favoriteCount);
             values.put(KEY_TWEET_RETWEET_COUNT, tweet.retweetCount);
             values.put(KEY_TWEET_PHOTO_URL, tweet.photoUrl);
@@ -176,11 +179,12 @@ public class TweetsDatabaseHelper extends SQLiteOpenHelper {
         List<Tweet> tweets = new ArrayList<>();
 
         String TWEETS_SELECT_QUERY =
-                String.format("SELECT * FROM %s LEFT OUTER JOIN %s ON %s.%s = %s.%s",
+                String.format("SELECT * FROM %s LEFT OUTER JOIN %s ON %s.%s = %s.%s ORDER BY %s DESC",
                         TABLE_TWEETS,
                         TABLE_USERS,
                         TABLE_TWEETS, KEY_TWEET_USER_ID_FK,
-                        TABLE_USERS, KEY_USER_ID);
+                        TABLE_USERS, KEY_USER_ID,
+                        KEY_TWEET_CREATED_MILLI);
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(TWEETS_SELECT_QUERY, null);
         try {
@@ -195,6 +199,7 @@ public class TweetsDatabaseHelper extends SQLiteOpenHelper {
                     Tweet newTweet = new Tweet();
                     newTweet.body = cursor.getString(cursor.getColumnIndex(KEY_TWEET_BODY));
                     newTweet.createdAt = cursor.getString(cursor.getColumnIndex(KEY_TWEET_CREATED_AT));
+                    newTweet.createdMilli = cursor.getLong(cursor.getColumnIndex(KEY_TWEET_CREATED_MILLI));
                     newTweet.favoriteCount = cursor.getInt(cursor.getColumnIndex(KEY_TWEET_FAVORITE_COUNT));
                     newTweet.retweetCount = cursor.getInt(cursor.getColumnIndex(KEY_TWEET_RETWEET_COUNT));
                     newTweet.photoUrl = cursor.getString(cursor.getColumnIndex(KEY_TWEET_PHOTO_URL));

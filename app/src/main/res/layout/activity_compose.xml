@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ComposeActivity"
+        android:padding="12dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:counterEnabled="true"
+            app:counterOverflowTextColor="@color/medium_red"
+            app:counterMaxLength="140">
+
+            <EditText
+                android:id="@+id/etCompose"
+                style="@style/textViewBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/ubuntu_regular"
+                android:gravity="start"
+                android:hint="What's happening?"
+                android:inputType="textMultiLine"
+                android:minLines="5"
+                android:textColorHighlight="@color/twitter_blue_30"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/btnTweet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textInputLayout"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/background_login"
+            android:fontFamily="@font/ubuntu_bold"
+            android:text="@string/tweet" />
+
+    </RelativeLayout>
+
+</layout>

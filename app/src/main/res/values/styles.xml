@@ -9,6 +9,10 @@
         <item name="colorPrimary">@color/twitter_blue</item>
         <item name="colorPrimaryDark">@color/my_background</item>
         <item name="android:statusBarColor">@color/twitter_blue</item>
+        <item name="popupTheme">@style/Theme.AppCompat.Light</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="colorControlNormal">@color/medium_gray</item>
+        <item name="colorControlActivated">@color/twitter_blue</item>
     </style>
 
     <!-- Application theme. -->
@@ -16,19 +20,28 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
     
+    <style name="Theme.App.Base" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorControlNormal">@color/twitter_blue</item>
+        <item name="colorControlActivated">@color/medium_red</item>
+        <item name="colorControlHighlight">@color/twitter_blue_30</item>
+    </style>
+    
     <style name="textViewBody">
         <item name="fontFamily">@font/ubuntu_medium</item>
         <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@android:color/tab_indicator_text</item>
     </style>
 
     <style name="textViewName">
         <item name="fontFamily">@font/ubuntu_bold</item>
         <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@android:color/tab_indicator_text</item>
     </style>
 
     <style name="textViewScreenName">
         <item name="fontFamily">@font/ubuntu_medium</item>
         <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@android:color/tab_indicator_text</item>
     </style>
 
 </resources>
