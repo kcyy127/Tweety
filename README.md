@@ -22,7 +22,7 @@ The following **optional** features are implemented:
 - [x] User is using **"Twitter branded" colors and styles**
 - [x] User can click links in tweets launch the web browser 
 - [ ] User can **select "reply" from detail view to respond to a tweet**
-- [ ] The "Compose" action is moved to a FloatingActionButton instead of on the AppBar
+- [x] The "Compose" action is moved to a FloatingActionButton instead of on the AppBar
 - [ ] Compose tweet functionality is build using modal overlay
 - [x] Use Parcelable instead of Serializable using the popular [Parceler library](http://guides.codepath.org/android/Using-Parceler).
 - [x] User can **open the twitter app offline and see last loaded tweets**. Persisted in SQLite tweets are refreshed on every application launch. While "live data" is displayed when app can get it from Twitter API, it is also saved for use in offline mode.
