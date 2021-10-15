@@ -61,7 +61,7 @@ public class ComposeActivity extends AppCompatActivity {
         String type = intent.getType();
         Uri data = intent.getData();
 
-        Toast.makeText(ComposeActivity.this, type, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), type, Toast.LENGTH_SHORT).show();
 
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             if ("text/plain".equals(type)) {
@@ -107,11 +107,11 @@ public class ComposeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String tweetContent = binding.etCompose.getText().toString();
                 if (tweetContent.isEmpty()) {
-                    Toast.makeText(ComposeActivity.this, "Sorry, your tweet cannot be empty", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Sorry, your tweet cannot be empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (tweetContent.length() > MAX_TWEET_LENGTH) {
-                    Toast.makeText(ComposeActivity.this, "Sorry, your tweet is too long", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Sorry, your tweet is too long", Toast.LENGTH_SHORT).show();
                     return;
                 }
 

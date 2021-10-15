@@ -118,7 +118,7 @@ public class TweetsDatabaseHelper extends SQLiteOpenHelper {
 
             db.insertOrThrow(TABLE_TWEETS, null, values);
             db.setTransactionSuccessful();
-            Log.d(LOG_TAG, String.valueOf(tweet.id));
+//            Log.d(LOG_TAG, String.valueOf(tweet.id));
         } catch (Exception e) {
             Log.d(LOG_TAG, "Error while trying to add tweet to database");
             e.printStackTrace();

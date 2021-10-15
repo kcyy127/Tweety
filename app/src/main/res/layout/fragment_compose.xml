@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/composeFragment"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:paddingHorizontal="12dp"
+    android:paddingVertical="18dp"
+    android:layout_margin="10dp"
+    android:background="@drawable/background_dialog">
+
+    <ImageView
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:id="@+id/ivProfileImage"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        tools:srcCompat="@tools:sample/avatars" />
+
+
+    <TextView
+        android:id="@+id/tvName"
+        style="@style/textViewName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toRightOf="@id/ivProfileImage"
+        app:layout_constraintTop_toTopOf="@id/ivProfileImage"
+        android:layout_marginLeft="5dp"
+        android:text="Name" />
+
+    <TextView
+        android:id="@+id/tvScreenName"
+        style="@style/textViewScreenName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="2dp"
+        app:layout_constraintLeft_toRightOf="@id/ivProfileImage"
+        app:layout_constraintTop_toBottomOf="@id/tvName"
+        android:text="\@ScreenName" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/ivProfileImage"
+        android:layout_marginTop="6dp"
+        app:counterEnabled="true"
+        app:counterMaxLength="140"
+        app:counterOverflowTextColor="@color/medium_red">
+
+        <EditText
+            android:id="@+id/etCompose"
+            style="@style/textViewBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/ubuntu_regular"
+            android:gravity="start"
+            android:hint="What's happening?"
+            android:inputType="textMultiLine"
+            android:minLines="5"
+            android:textColorHighlight="@color/twitter_blue_30" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/btnTweet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/textInputLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/background_login"
+        android:fontFamily="@font/ubuntu_bold"
+        android:text="TWEET" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

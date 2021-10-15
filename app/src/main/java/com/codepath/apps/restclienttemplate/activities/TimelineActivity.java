@@ -1,10 +1,11 @@
 package com.codepath.apps.restclienttemplate.activities;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -13,11 +14,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
+import com.codepath.apps.restclienttemplate.ComposeDialogFragment;
 import com.codepath.apps.restclienttemplate.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.TweetsAdapter;
@@ -50,6 +49,8 @@ public class TimelineActivity extends AppCompatActivity {
 
     private TweetsDatabaseHelper dbHelper;
 
+    private AlertDialog composeDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +75,27 @@ public class TimelineActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(TimelineActivity.this, ComposeActivity.class);
                 startActivityForResult(intent, REQUEST_CODE_COMPOSE_TWEET);
+
+//                if (composeDialog == null) {
+//                    AlertDialog.Builder builder = new AlertDialog.Builder(TimelineActivity.this);
+//                    View composeView = LayoutInflater.from(TimelineActivity.this).inflate(
+//                            R.layout.fragment_compose,
+//                            (ViewGroup) findViewById(R.id.composeFragment)
+//                    );
+//                    builder.setView(composeView);
+//
+//                    composeDialog = builder.create();
+//
+//                    if (composeDialog.getWindow() != null) {
+//                        composeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+//                    }
+
+//                }
+//                composeDialog.show();
+//
+//                FragmentManager fm = getSupportFragmentManager();
+//                ComposeDialogFragment composeDialogFragment = new ComposeDialogFragment();
+//                composeDialogFragment.show(fm, ComposeDialogFragment.TAG);
             }
         });
 
