@@ -3,16 +3,12 @@ package com.codepath.apps.restclienttemplate;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.MediaController;
-import android.widget.TextView;
-import android.widget.VideoView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityOptionsCompat;
@@ -22,15 +18,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.codepath.apps.restclienttemplate.activities.TimelineActivity;
+import com.codepath.apps.restclienttemplate.activities.TweetDetailActivity;
 import com.codepath.apps.restclienttemplate.databinding.ItemTweetImageBinding;
 import com.codepath.apps.restclienttemplate.databinding.ItemTweetTextBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
+import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.jetbrains.annotations.NotNull;
 import org.parceler.Parcels;
 
 import java.util.List;
+
+import okhttp3.Headers;
 
 public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -38,7 +39,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private Context context;
     private List<Tweet> tweets;
-    private List<User> users;
+
+    private TwitterClient client;
 
     private static final int TYPE_TEXT = 0;
     private static final int TYPE_IMAGE = 1;
@@ -48,6 +50,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public TweetsAdapter(Context context, List<Tweet> tweets) {
         this.context = context;
         this.tweets = tweets;
+        this.client = TwitterApp.getRestClient(context);
     }
 
     @NonNull
@@ -167,22 +170,61 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     Pair<View, String> p3 = Pair.create(bindingText.tvName, "tvName");
                     Pair<View, String> p4 = Pair.create(bindingText.tvScreenName, "tvScreenName");
                     Pair<View, String> p5 = Pair.create(bindingText.tvTime, "tvTime");
-                    Pair<View, String> p6 = Pair.create(bindingText.ivVerified, "ivVerified");
+//                    Pair<View, String> p6 = Pair.create(bindingText.ivVerified, "ivVerified");
                     ActivityOptionsCompat options = ActivityOptionsCompat.
-                            makeSceneTransitionAnimation((Activity) context, p1, p2, p3, p4, p5, p6);
+                            makeSceneTransitionAnimation((Activity) context, p1, p2, p3, p4, p5);
 
                     context.startActivity(intent, options.toBundle());
                 }
             });
 
-            bindingText.buttonLike.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Log.d(LOG_TAG, tweet.body);
-                }
-            });
+            setFavorites(bindingText.buttonLike, tweet);
 
         }
+    }
+
+    private void setFavorites(CheckBox button, Tweet tweet) {
+        button.setOnCheckedChangeListener(null);
+        button.setChecked(tweet.favorited);
+        button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    client.likeTweet(tweet.id, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Headers headers, JSON json) {
+                            Log.d(LOG_TAG, "Successfully liked " + tweet.body);
+                            tweet.favorited = true;
+                            notifyDataSetChanged();
+
+                            ((TimelineActivity)context).dbUpdateFavorited(tweet);
+
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                            Log.e(LOG_TAG, "Failed to like " + tweet.body, throwable);
+                        }
+                    });
+                } else {
+                    client.dislikeTweet(tweet.id, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Headers headers, JSON json) {
+                            Log.d(LOG_TAG, "Successfully disliked " + tweet.body);
+                            tweet.favorited = false;
+                            notifyDataSetChanged();
+
+                            ((TimelineActivity)context).dbUpdateFavorited(tweet);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                            Log.e(LOG_TAG, "Failed to dislike " + tweet.body, throwable);
+                        }
+                    });
+                }
+            }
+        });
     }
 
     public class mViewHolderImage extends RecyclerView.ViewHolder {
@@ -235,6 +277,42 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     context.startActivity(intent, options.toBundle());
                 }
             });
+
+            setFavorites(bindingImage.buttonLike, tweet);
+
+//            bindingImage.buttonLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                @Override
+//                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+//                    if (isChecked) {
+//                        client.likeTweet(tweet.id, new JsonHttpResponseHandler() {
+//                            @Override
+//                            public void onSuccess(int statusCode, Headers headers, JSON json) {
+//                                Log.d(LOG_TAG, "Successfully liked " + tweet.body);
+//                            }
+//
+//                            @Override
+//                            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+//                                Log.e(LOG_TAG, "Failed to like " + tweet.body, throwable);
+//                                bindingImage.buttonLike.setChecked(false);
+//                            }
+//                        });
+//                    } else {
+//                        client.dislikeTweet(tweet.id, new JsonHttpResponseHandler() {
+//                            @Override
+//                            public void onSuccess(int statusCode, Headers headers, JSON json) {
+//                                Log.d(LOG_TAG, "Successfully disliked " + tweet.body);
+//                            }
+//
+//                            @Override
+//                            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+//                                Log.e(LOG_TAG, "Failed to dislike " + tweet.body, throwable);
+//                                bindingImage.buttonLike.setChecked(true);
+//                            }
+//                        });
+//                    }
+//                }
+//            });
+
         }
     }
 

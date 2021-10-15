@@ -35,6 +35,9 @@ public class Tweet {
     @ColumnInfo
     public String body;
     @ColumnInfo
+    public long userId;
+
+    @ColumnInfo
     public String createdAt;
     @ColumnInfo
     public long createdMilli;
@@ -44,10 +47,10 @@ public class Tweet {
     @ColumnInfo
     public int retweetCount;
     @ColumnInfo
-    public String photoUrl = "";
+    public boolean favorited;
 
     @ColumnInfo
-    public long userId;
+    public String photoUrl = "";
 
     @Ignore
     public User user;
@@ -66,6 +69,8 @@ public class Tweet {
 
         tweet.favoriteCount = jsonObject.getInt("favorite_count");
         tweet.retweetCount = jsonObject.getInt("retweet_count");
+
+        tweet.favorited = jsonObject.getBoolean("favorited");
 
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
         tweet.userId = tweet.user.id;
@@ -88,6 +93,7 @@ public class Tweet {
         return tweet;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public static List<Tweet> fromJsonArray(JSONArray jsonArray) throws JSONException {
         List<Tweet> tweets = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {

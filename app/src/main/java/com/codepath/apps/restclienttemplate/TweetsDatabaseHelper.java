@@ -7,8 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
-
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
 
@@ -21,7 +19,7 @@ public class TweetsDatabaseHelper extends SQLiteOpenHelper {
     private static final String LOG_TAG = "TweetsDatabaseHelper";
 
     private static final String DATABASE_NAME = "tweetsDatabase";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 5;
 
     // Table Names
     private static final String TABLE_TWEETS = "tweets";
@@ -34,6 +32,7 @@ public class TweetsDatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_TWEET_CREATED_MILLI = "createdMilli";
     private static final String KEY_TWEET_FAVORITE_COUNT = "favoriteCount";
     private static final String KEY_TWEET_RETWEET_COUNT = "retweetCount";
+    private static final String KEY_TWEET_FAVORITED = "favorited";
     private static final String KEY_TWEET_PHOTO_URL = "photoUrl";
     private static final String KEY_TWEET_USER_ID_FK = "userId";
 
@@ -73,6 +72,7 @@ public class TweetsDatabaseHelper extends SQLiteOpenHelper {
                 KEY_TWEET_CREATED_MILLI + " INTEGER," +
                 KEY_TWEET_FAVORITE_COUNT + " INTEGER," +
                 KEY_TWEET_RETWEET_COUNT + " INTEGER," +
+                KEY_TWEET_FAVORITED + " NUMERIC," +
                 KEY_TWEET_PHOTO_URL + " TEXT" +
                 ")";
 
@@ -113,6 +113,7 @@ public class TweetsDatabaseHelper extends SQLiteOpenHelper {
             values.put(KEY_TWEET_CREATED_MILLI, tweet.createdMilli);
             values.put(KEY_TWEET_FAVORITE_COUNT, tweet.favoriteCount);
             values.put(KEY_TWEET_RETWEET_COUNT, tweet.retweetCount);
+            values.put(KEY_TWEET_FAVORITED, tweet.favorited);
             values.put(KEY_TWEET_PHOTO_URL, tweet.photoUrl);
 
             db.insertOrThrow(TABLE_TWEETS, null, values);
@@ -202,6 +203,7 @@ public class TweetsDatabaseHelper extends SQLiteOpenHelper {
                     newTweet.createdMilli = cursor.getLong(cursor.getColumnIndex(KEY_TWEET_CREATED_MILLI));
                     newTweet.favoriteCount = cursor.getInt(cursor.getColumnIndex(KEY_TWEET_FAVORITE_COUNT));
                     newTweet.retweetCount = cursor.getInt(cursor.getColumnIndex(KEY_TWEET_RETWEET_COUNT));
+                    newTweet.favorited = cursor.getInt(cursor.getColumnIndex(KEY_TWEET_FAVORITED)) > 0;
                     newTweet.photoUrl = cursor.getString(cursor.getColumnIndex(KEY_TWEET_PHOTO_URL));
                     newTweet.user = newUser;
                     newTweet.userId = cursor.getLong(cursor.getColumnIndex(KEY_TWEET_USER_ID_FK));
@@ -224,9 +226,17 @@ public class TweetsDatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_USER_PROFILE_IMAGE_URL, user.profileImageUrl);
 
-        return db.update(TABLE_USERS, values,
-                KEY_USER_NAME + " = ?",
+        return db.update(TABLE_USERS, values, KEY_USER_NAME + " = ?",
                 new String[] {String.valueOf(user.name)});
+    }
+
+    public int updateFavorited(Tweet tweet) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_TWEET_FAVORITED, tweet.favorited);
+
+        return db.update(TABLE_TWEETS, values, KEY_TWEET_ID + " = ?", new String[] {String.valueOf(tweet.id)});
     }
 
     public void deleteAllTweetsAndUsers() {

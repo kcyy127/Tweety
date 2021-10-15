@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/my_background"
-        tools:context=".TimelineActivity">
+        tools:context=".activities.TimelineActivity">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appBar"
@@ -55,6 +55,18 @@
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_margin="24dp"
+            android:backgroundTint="@color/twitter_blue"
+            android:src="@drawable/ic_compose"
+            android:tint="@android:color/white"
+            app:fabSize="normal" />
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 
 </layout>

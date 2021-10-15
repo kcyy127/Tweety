@@ -113,7 +113,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="1.5"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -137,7 +137,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="1.5"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -154,7 +154,7 @@
                     android:layout_marginHorizontal="8dp"
                     android:backgroundTint="@color/twitter_blue_fill_pressed"
                     android:fontFamily="@font/ubuntu_medium"
-                    android:text="32"
+                    android:text="322.6k"
                     android:id="@+id/tvLikes"/>
 
             </LinearLayout>

@@ -1,32 +1,37 @@
-package com.codepath.apps.restclienttemplate;
+package com.codepath.apps.restclienttemplate.activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.app.ActionBar;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
+import com.codepath.apps.restclienttemplate.EndlessRecyclerViewScrollListener;
+import com.codepath.apps.restclienttemplate.R;
+import com.codepath.apps.restclienttemplate.TweetsAdapter;
+import com.codepath.apps.restclienttemplate.TweetsDatabaseHelper;
+import com.codepath.apps.restclienttemplate.TwitterApp;
+import com.codepath.apps.restclienttemplate.TwitterClient;
 import com.codepath.apps.restclienttemplate.databinding.ActivityTimelineBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.parceler.Parcels;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Headers;
@@ -64,12 +69,16 @@ public class TimelineActivity extends AppCompatActivity {
             }
         });
 
-        setSupportActionBar(binding.toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        binding.fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(TimelineActivity.this, ComposeActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_COMPOSE_TWEET);
+            }
+        });
 
         dbHelper = TweetsDatabaseHelper.getInstance(this);
         tweets = dbHelper.getAllTweets();
-//        Log.i(LOG_TAG, tweets.get(0).body);
 
         adapter = new TweetsAdapter(this, tweets);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -90,26 +99,6 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.compose:
-                Toast.makeText(this, "Compose pressed!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(this, ComposeActivity.class);
-                startActivityForResult(intent, REQUEST_CODE_COMPOSE_TWEET);
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         if (requestCode == REQUEST_CODE_COMPOSE_TWEET && resultCode == RESULT_OK) {
             Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
@@ -123,6 +112,7 @@ public class TimelineActivity extends AppCompatActivity {
     private void loadMoreData() {
         // 1. Send an API request to retrieve appropriate paginated data
         client.getNextPageOfTweets(new JsonHttpResponseHandler() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 Log.i(LOG_TAG, "onSuccess for loadMoreData!" + json.toString());
@@ -150,6 +140,7 @@ public class TimelineActivity extends AppCompatActivity {
 
     private void populateHomeTimeline() {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 Log.i(LOG_TAG, "onSuccess!" + json.toString());
@@ -175,5 +166,9 @@ public class TimelineActivity extends AppCompatActivity {
                 binding.swipeContainer.setRefreshing(false);
             }
         });
+    }
+
+    public void dbUpdateFavorited(Tweet tweet) {
+        dbHelper.updateFavorited(tweet);
     }
 }

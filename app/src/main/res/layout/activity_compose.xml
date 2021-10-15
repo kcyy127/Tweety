@@ -6,13 +6,50 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ComposeActivity"
-        android:padding="12dp">
+        tools:context=".activities.ComposeActivity"
+        android:paddingHorizontal="12dp"
+        android:paddingTop="18dp">
+
+        <ImageView
+            android:id="@+id/ivProfileImage"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            tools:srcCompat="@tools:sample/avatars" />
+
+
+        <TextView
+            android:id="@+id/tvName"
+            style="@style/textViewName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="4dp"
+            android:layout_toEndOf="@+id/ivProfileImage"
+            android:text="Name"
+            android:transitionName="tvName" />
+
+        <TextView
+            android:id="@+id/tvScreenName"
+            style="@style/textViewScreenName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvName"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="2dp"
+            android:layout_toEndOf="@+id/ivProfileImage"
+            android:layout_toRightOf="@id/ivProfileImage"
+            android:text="\@ScreenName"
+            android:transitionName="tvScreenName" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/ivProfileImage"
+            android:layout_marginTop="12dp"
             app:counterEnabled="true"
             app:counterOverflowTextColor="@color/medium_red"
             app:counterMaxLength="140">
@@ -39,8 +76,8 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="12dp"
             android:background="@drawable/background_login"
-            android:fontFamily="@font/ubuntu_bold"
-            android:text="@string/tweet" />
+            android:text="TWEET"
+            android:fontFamily="@font/ubuntu_bold" />
 
     </RelativeLayout>
 
