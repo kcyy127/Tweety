@@ -11,11 +11,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.codepath.apps.restclienttemplate.ComposeDialogFragment;
 import com.codepath.apps.restclienttemplate.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.restclienttemplate.R;
@@ -29,13 +34,14 @@ import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.List;
 
 import okhttp3.Headers;
 
-public class TimelineActivity extends AppCompatActivity {
+public class TimelineActivity extends AppCompatActivity implements ComposeDialogFragment.TweetActionListener {
     private static final String LOG_TAG = "TimelineActivity";
     private static final int REQUEST_CODE_COMPOSE_TWEET = 0;
 
@@ -49,14 +55,28 @@ public class TimelineActivity extends AppCompatActivity {
 
     private TweetsDatabaseHelper dbHelper;
 
-    private AlertDialog composeDialog;
+    private String name;
+    private String screenName;
+    private String profileUrl;
+
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.d(LOG_TAG, "onCreate");
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_timeline);
 
         client = TwitterApp.getRestClient(this);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(TimelineActivity.this);
+
+        getUser();
+
+        name = sharedPreferences.getString("name", "n/a");
+        screenName = sharedPreferences.getString("screenName", "n/a");
+        profileUrl = sharedPreferences.getString("profileUrl", "");
 
         binding.swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
@@ -73,29 +93,7 @@ public class TimelineActivity extends AppCompatActivity {
         binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(TimelineActivity.this, ComposeActivity.class);
-                startActivityForResult(intent, REQUEST_CODE_COMPOSE_TWEET);
-
-//                if (composeDialog == null) {
-//                    AlertDialog.Builder builder = new AlertDialog.Builder(TimelineActivity.this);
-//                    View composeView = LayoutInflater.from(TimelineActivity.this).inflate(
-//                            R.layout.fragment_compose,
-//                            (ViewGroup) findViewById(R.id.composeFragment)
-//                    );
-//                    builder.setView(composeView);
-//
-//                    composeDialog = builder.create();
-//
-//                    if (composeDialog.getWindow() != null) {
-//                        composeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
-//                    }
-
-//                }
-//                composeDialog.show();
-//
-//                FragmentManager fm = getSupportFragmentManager();
-//                ComposeDialogFragment composeDialogFragment = new ComposeDialogFragment();
-//                composeDialogFragment.show(fm, ComposeDialogFragment.TAG);
+                getComposeDialogFragment(null);
             }
         });
 
@@ -118,6 +116,19 @@ public class TimelineActivity extends AppCompatActivity {
         binding.rvTweets.addOnScrollListener(scrollListener);
 
         populateHomeTimeline();
+
+        Intent implicitIntent = getIntent();
+        Log.d(LOG_TAG, "Got the implicit intent");
+
+        if (implicitIntent != null) {
+            fromImplicitIntent(implicitIntent);
+        }
+    }
+
+    public void getComposeDialogFragment(String content) {
+        FragmentManager fm = getSupportFragmentManager();
+        ComposeDialogFragment composeDialogFragment = ComposeDialogFragment.newInstance(name, screenName, profileUrl, content);
+        composeDialogFragment.show(fm, ComposeDialogFragment.TAG);
     }
 
     @Override
@@ -137,7 +148,7 @@ public class TimelineActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                Log.i(LOG_TAG, "onSuccess for loadMoreData!" + json.toString());
+//                Log.i(LOG_TAG, "onSuccess for loadMoreData!" + json.toString());
                 // 2. Deserialize and construct new model objects from the API response
                 JSONArray jsonArray = json.jsonArray;
                 try {
@@ -165,7 +176,7 @@ public class TimelineActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                Log.i(LOG_TAG, "onSuccess!" + json.toString());
+//                Log.i(LOG_TAG, "onSuccess!" + json.toString());
                 JSONArray jsonArray = json.jsonArray;
                 try {
                     adapter.clear();
@@ -192,5 +203,67 @@ public class TimelineActivity extends AppCompatActivity {
 
     public void dbUpdateFavorited(Tweet tweet) {
         dbHelper.updateFavorited(tweet);
+    }
+
+    private void getUser() {
+//        Log.d(LOG_TAG, "getUser invoked");
+        client.getUser(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                JSONObject userJsonObject = json.jsonObject;
+                try {
+                    String n = userJsonObject.getString("name");
+                    String sn = userJsonObject.getString("screen_name");
+                    String pu = userJsonObject.getString("profile_image_url_https");
+
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("name", n);
+                    editor.putString("screenName", sn);
+                    editor.putString("profileUrl", pu);
+                    editor.commit();
+
+                    Log.d(LOG_TAG, "Got screen name " + screenName);
+                } catch (JSONException e) {
+                    Log.e(LOG_TAG, "Nope", e);
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Log.e(LOG_TAG, "Failed to load user info", throwable);
+            }
+        });
+    }
+
+    @Override
+    public void onTweet(Tweet tweet) {
+        tweets.add(0, tweet);
+        adapter.notifyDataSetChanged();
+        dbHelper.addTweet(tweet);
+    }
+
+    public void fromImplicitIntent(Intent implicitIntent) {
+//        Intent implicitIntent = getIntent();
+//        Log.d(LOG_TAG, "Got the implicit intent");
+//        if (implicitIntent != null) {
+//        }
+
+        String action = implicitIntent.getAction();
+        String type = implicitIntent.getType();
+        Uri data = implicitIntent.getData();
+
+        Log.d(LOG_TAG, action + type);
+
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            Log.d(LOG_TAG, action);
+            if ("text/plain".equals(type)) {
+                Log.d(LOG_TAG, "About to get dialog");
+
+                String titleOfPage = implicitIntent.getStringExtra(Intent.EXTRA_SUBJECT);
+                String urlOfPage = implicitIntent.getStringExtra(Intent.EXTRA_TEXT);
+
+                getComposeDialogFragment(titleOfPage + " - " + urlOfPage);
+            }
+        }
     }
 }

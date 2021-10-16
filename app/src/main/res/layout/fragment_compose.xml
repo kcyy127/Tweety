@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
-    android:paddingHorizontal="12dp"
+    android:paddingHorizontal="18dp"
     android:paddingVertical="18dp"
     android:layout_margin="10dp"
     android:background="@drawable/background_dialog">
@@ -70,13 +70,14 @@
 
     <Button
         android:id="@+id/btnTweet"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
         app:layout_constraintTop_toBottomOf="@id/textInputLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/background_login"
         android:fontFamily="@font/ubuntu_bold"
+        android:textSize="12sp"
         android:text="TWEET" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
