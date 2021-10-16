@@ -2,7 +2,7 @@
 
 **Tweety** is an android app that allows a user to view his Twitter timeline. The app utilizes [Twitter REST API](https://dev.twitter.com/rest/public).
 
-Time spent: **18** hours spent in total
+Time spent: **24** hours spent in total
 
 ### Tweety Part 2
 
@@ -33,13 +33,11 @@ The following **optional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://i.imgur.com/snO75pv.gif' title='Video Walkthrough' height=360 alt='Video Walkthrough' />
 
 GIF created with [Peek](https://github.com/phw/peek).
 
 #### Notes
-
-Describe any challenges encountered while building the app.
 
 
 ---
